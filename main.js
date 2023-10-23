@@ -1,4 +1,5 @@
 const listaPokemon = document.querySelector("#listaPokemon");
+const botonesHeader = document.querySelectorAll(".btn-header")
 let URL = "https://pokeapi.co/api/v2/pokemon/";
 
 // ciclo For para recorrer cada uno de los 151 pokemones
@@ -47,24 +48,29 @@ function mostrarPokemon(poke) {
     listaPokemon.append(div);
 }
 
-/*<div class="pokemon">
-                    <p class="pokemon-id-back">#025</p>
-                    <div class="pokemon-imagen">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
-                            alt="Pikachu">
-                    </div>
-                    <div class="pokemon-info">
-                        <div class="nombre-contenedor">
-                            <p class="pokemon-id">#025</p>
-                            <h2 class="pokemon-nombre">Pikachu</h2>
-                        </div>
-                        <div class="pokemon-tipos">
-                            <p class="tipo">Electric</p>
-                            <p class="tipo">Fighting</p>
-                        </div>
-                        <div class="pokemon-stats">
-                            <p class="stat">4m</p>
-                            <p class="stat">60kg</p>
-                        </div>
-                    </div>
-                </div>*/
+// Filtro botones
+
+botonesHeader.forEach(boton => boton.addEventListener('click', (event) => {
+    const botonId = event.currentTarget.id
+
+    listaPokemon.innerHTML = "" //Arrancamos con el contenedor vacío
+
+    for (let i = 1; i <= 151; i++) {
+        fetch(URL + i)
+            .then((response) => response.json())
+            .then(data => {
+                if (botonId === "ver-todos") {
+                    mostrarPokemon(data)
+                } else {
+                    //Buscamos si algunos de los tipos coincide con el botón que clickeamos
+                    const tipos = data.types.map(type => type.type.name)
+                    if (tipos.some(tipo => tipo.includes(botonId))) {
+                        mostrarPokemon(data)
+                    }
+
+                }
+            });
+
+    }
+
+}))
